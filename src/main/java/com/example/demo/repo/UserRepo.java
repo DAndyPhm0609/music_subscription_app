@@ -14,6 +14,7 @@ public class UserRepo {
 
     @Autowired
     private DynamoDBMapper dynamoDBMapper;
+
     public User save(User user) {
         dynamoDBMapper.save(user);
         return user;
