@@ -2,7 +2,6 @@ package com.example.demo.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -13,20 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class DynamoDbConfig {
-
-//    private static String dynamodbEndpoint = "http://localhost:8000/";
-//
-//    private static String dynamodbAccessKey = "local";
-//
-//    private static String awsRegion = "us-west-2";
-//
-//    private static String dynamodbSecretKey = "local";
-
-    @Value("${aws.dynamodb.endpoint}")
-    private String dynamodbEndpoint;
-
-    @Value("${aws.region}")
-    private String awsRegion;
 
     @Value("${aws.dynamodb.accessKey}")
     private String dynamodbAccessKey;
@@ -39,8 +24,7 @@ public class DynamoDbConfig {
         return new DynamoDBMapper(buildAmazonDynamoDB());
     }
 
-    @Bean
-    public AmazonDynamoDB buildAmazonDynamoDB() {
+    private AmazonDynamoDB buildAmazonDynamoDB() {
         return AmazonDynamoDBClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1)
                 .withCredentials(
