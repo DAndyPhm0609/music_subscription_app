@@ -1,15 +1,17 @@
 package com.example.demo;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.util.IOUtils;
+import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.example.demo.model.Music;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.sf.json.JSONArray;
-import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -19,16 +21,14 @@ import org.springframework.context.annotation.ComponentScan;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-import org.json.simple.parser.JSONParser;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.util.FileCopyUtils;
+import net.sf.json.JSONArray;
+import com.amazonaws.util.IOUtils;
 
+import org.springframework.core.io.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.List;
-
-import static org.apache.commons.codec.CharEncoding.UTF_8;
 
 @SpringBootApplication
 @ComponentScan({"com.example.demo.repo.MusicRepository"})
@@ -39,6 +39,9 @@ public class Assignment1Application implements CommandLineRunner {
 
 	@Autowired
 	DynamoDBMapper dynamoDBMapper;
+
+	@Autowired
+	AmazonDynamoDB amazonDynamoDB;
 
 	@Value("classpath:data/a1.json")
 	Resource resourceFile;
@@ -56,15 +59,22 @@ public class Assignment1Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// TODO: see role IAM
 		CreateTableRequest tableRequest = dynamoDBMapper.generateCreateTableRequest(Music.class);
 		tableRequest.setProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
 
-		read_save_music();
+		boolean created = TableUtils.createTableIfNotExists(amazonDynamoDB, tableRequest);
+
+		if (created) {
+			logger.info("Created DynamoDB table for " + Music.class.getSimpleName());
+			int data_size = read_save_music();
+			logger.info("Add " +data_size+" data successfully ... ");
+		} else {
+			logger.info("Table already exists for " + Music.class.getSimpleName());
+		}
 
 	}
 
-	private void read_save_music() throws IOException, ParseException {
+	private int read_save_music() throws Exception {
 		if (resourceFile.exists()){
 			InputStream is = Files.newInputStream(resourceFile.getFile().toPath().toFile().toPath());
 			String jsonTxt = IOUtils.toString(is);
@@ -82,9 +92,11 @@ public class Assignment1Application implements CommandLineRunner {
 
 				Music music = new Music(title, artist, year, web_url, img_url);
 				dynamoDBMapper.save(music);
-				break;
 			}
-
+			return array.size();
+		}
+		else{
+			throw new Exception("Resource file does not exist");
 		}
 	}
 }

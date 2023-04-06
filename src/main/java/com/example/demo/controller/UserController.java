@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 import com.example.demo.model.User;
+import com.example.demo.repo.MetaDataService;
 import com.example.demo.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @Controller
@@ -14,6 +18,9 @@ public class UserController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private MetaDataService metadataService;
 
     @RequestMapping("/")
     public String login_page()
@@ -45,4 +52,12 @@ public class UserController {
     public String updateEmployee(@PathVariable("email") String email, @RequestBody User user) {
         return userRepo.update(email, user);
     }
+
+    @PostMapping("/upload")
+    public String upload(
+            @RequestParam("file") MultipartFile file) throws IOException {
+        metadataService.upload(file);
+        return "redirect:/dashboard";
+    }
+
 }

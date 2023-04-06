@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -19,14 +20,29 @@ public class DynamoDbConfig {
     @Value("${aws.dynamodb.secretKey}")
     private String dynamodbSecretKey;
 
+    @Value("${aws.dynamodb.endpoint}")
+    private String dynamodbEndpoint;
+
+    @Value("${aws.region}")
+    private String awsRegion;
+
     @Bean
     public DynamoDBMapper dynamoDBMapper() {
         return new DynamoDBMapper(buildAmazonDynamoDB());
     }
 
-    private AmazonDynamoDB buildAmazonDynamoDB() {
-        return AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.US_EAST_1)
+    @Bean
+    public AmazonDynamoDB buildAmazonDynamoDB() {
+        System.out.println(dynamodbAccessKey);
+        System.out.println(dynamodbSecretKey);
+        return AmazonDynamoDBClientBuilder
+                .standard()
+                .withEndpointConfiguration(
+                        new AwsClientBuilder.EndpointConfiguration(
+                                dynamodbEndpoint,
+                                awsRegion
+                        )
+                )
                 .withCredentials(
                         new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials(
