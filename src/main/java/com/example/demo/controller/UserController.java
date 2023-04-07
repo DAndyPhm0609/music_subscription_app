@@ -21,11 +21,6 @@ public class UserController {
         return"login_page";
     }
 
-    @RequestMapping("/register_page")
-    public String defectDetails() {
-        return "register_page";
-    }
-
     @PostMapping("/register")
     public User saveUser(@RequestBody User user) {
         return userRepo.save(user);
@@ -41,8 +36,8 @@ public class UserController {
         return  userRepo.delete(email);
     }
 
-    @PutMapping("/employee/{email}")
-    public String updateEmployee(@PathVariable("email") String email, @RequestBody User user) {
-        return userRepo.update(email, user);
-    }
+//    @PutMapping("/employee/{email}")
+//    public String updateEmployee(@PathVariable("email") String email, @RequestBody User user) {
+//        return userRepo.update(email, user);
+//    }
 }

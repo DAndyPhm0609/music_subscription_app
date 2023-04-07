@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @DynamoDBTable(tableName = "login")
 public class User {
-    @DynamoDBHashKey
+    @DynamoDBHashKey(attributeName = "email")
     private String email;
 
-    @DynamoDBAttribute
+    @DynamoDBAttribute(attributeName = "password")
     private String password;
 
-    @DynamoDBAttribute
+    @DynamoDBAttribute(attributeName = "user_name")
     private String user_name;
 }

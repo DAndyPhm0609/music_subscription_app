@@ -7,19 +7,25 @@
 <body>
 <h1>LOGIN PAGE</h1>
 
-<form action="main_page.html" target="_self">
+<div id="error"></div>
+<form id="form" action="main_page.html" target="_self" method="GET">
 
-  <label for="email">Email:</label><br>
-  <input type="text" id="email" name="email"><br>
+    <label for="name">Email</label>
+    <input id="name" name="name" type="text" required>
 
-  <label for="password">Password:</label><br>
-  <input type="text" id="password" name="password"><br>
-
-  <input type="submit" value="Submit">
-
+  <div>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password">
+  </div>
+  <button type="submit">Submit</button>
+</form>
+<br>
+<form>
   <input type="submit" formaction="register_page.html" value="Register a new account">
 </form>
 
 
+
 </body>
+<script src="./login.js"></script>
 </html>

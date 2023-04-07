@@ -5,6 +5,41 @@
     <title>Title</title>
 </head>
 <body>
+<p>Hello user</p>
+<br>
+<div class="container">
+    <form action="">
+        <input type="text" placeholder="music title: " name="title">
+        <input type="text" placeholder="artist: " name="artist">
+        <input type="text" placeholder="year: " name="year">
+        <input type="submit" value="search">
+    </form>
+    <br>
+</div>
 
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>title</th>
+                <th>artist</th>
+                <th>year</th>
+                <th>web_url</th>
+                <th>img_url</th>
+            </tr>
+        </thead>
+        <tbody id="music_table">
+
+        </tbody>
+    </table>
+
+</div>
+
+<div>
+<form id="form" action="login_page.html" target="_self" method="GET">
+    <input type="submit" value="logout">
+</form>
+</div>
 </body>
+<script src="./main.js"></script>
 </html>
